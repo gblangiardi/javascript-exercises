@@ -2,23 +2,15 @@
 
 const dayjs = require('dayjs');
 
-function Task(id, desc, urgent, private, date){
+function Task(id, desc, urgent=false, private=true, date=undefined){
 
     this.id=id;
     this.desc=desc;
 
-    if(urgent === undefined){
-        this.urgent = false;
-    }
-    else{
-        this.urgent=urgent;
-    }
-    if(private === undefined){
-        this.private = true;
-    }
-    else{    
-        this.private = private;
-    }
+    
+    this.urgent=urgent;
+       
+    this.private = private;
 
     this.date=date;
     
