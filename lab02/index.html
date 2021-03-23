@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="mystyle.css">
+
+        <title>To Do Manager</title>
+    </head>
+    <body>
+        <header>
+            <nav class="navbar  navbar-dark" style="background-color:green">
+                <a class="navbar-brand col-auto" href="#">
+                    <img src="icons/check2-all.svg" width="30" height="30" alt="">
+                    ToDo Manager
+                </a>
+                <form class="form-inline col-sm-3">
+                    <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+                </form>
+                <a class="col-auto" href="#">
+                    <img src="icons/person-circle.svg" width="30" height="30" alt="">
+                </a>
+            </nav>
+        </header>
+        <div class="container-fluid row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="sidebar-sticky pt-3">
+                  <ul class="nav flex-column">
+                    <li class="nav-item border-bottom">
+                      <a class="nav-link active" href="#">
+                        <span data-feather="home"></span>
+                        All <span class="sr-only">(current)</span>
+                      </a>
+                    </li>
+                    <li class="nav-item border-bottom">
+                      <a class="nav-link" href="#">
+                        <span data-feather="file"></span>
+                        Important
+                      </a>
+                    </li>
+                    <li class="nav-item border-bottom">
+                      <a class="nav-link" href="#">
+                        <span data-feather="shopping-cart"></span>
+                        Today
+                      </a>
+                    </li>
+                    <li class="nav-item border-bottom">
+                      <a class="nav-link" href="#">
+                        <span data-feather="users"></span>
+                        Next 7 Days
+                      </a>
+                    </li>
+                    <li class="nav-item border-bottom">
+                      <a class="nav-link" href="#">
+                        <span data-feather="bar-chart-2"></span>
+                        Private
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </nav>
+        
+
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+                    <h1>All</h1>
+                </div>
+                <div class="row">
+                    <p class="col-md-4 mr-auto ">
+                        <input  type="checkbox">
+                        Complete Lab 2
+                    </p>
+                    <p class="col-auto date">
+                        Monday 22 March 2021 at 14:30
+                    </p>
+                </div>
+                <div class="row">
+                    <p class="col-md-4 mr-auto">
+                        <input  type="checkbox">
+                        Buy some groceries
+                    </p>
+                    <img src="icons/person-square.svg" width="25" height="25" alt="" class="col-auto mr-auto">
+                    <p class="col-auto date">
+                        Today at 12:00
+                    </p>
+                </div>
+                <div class="row">
+                    <p class="col-md-4 mr-auto important">
+                        <input  type="checkbox">
+                        Read a good book!
+                    </p>
+                </div>
+            </main>
+
+        </div>
+
+        <div class = "row foot align-items-end">
+            <button type="button" class="btn btn-success btn-circle btn-xl">+</button> 
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+    </body>
+</html>
