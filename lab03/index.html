@@ -55,11 +55,11 @@
         <!-- Left sidebar -->
         <aside class="collapse d-sm-block col-sm-4 col-12 bg-light below-nav" id="left-sidebar">
           <div class="list-group list-group-flush">
-            <a href="#" class="list-group-item list-group-item-action active">All</a>
-            <a href="#" class="list-group-item list-group-item-action">Important</a>
-            <a href="#" class="list-group-item list-group-item-action">Today</a>
-            <a href="#" class="list-group-item list-group-item-action">Next 7 Days</a>
-            <a href="#" class="list-group-item list-group-item-action">Private</a>
+            <a href="#" class="list-group-item list-group-item-action active" id="All">All</a>
+            <a href="#" class="list-group-item list-group-item-action" id="Important">Important</a>
+            <a href="#" class="list-group-item list-group-item-action" id="Today">Today</a>
+            <a href="#" class="list-group-item list-group-item-action" id="Next 7 Days">Next 7 Days</a>
+            <a href="#" class="list-group-item list-group-item-action" id="Private">Private</a>
           </div>
 
           
@@ -67,7 +67,7 @@
 
         <!-- Main content -->
         <main class="col-sm-8 col-12 below-nav">
-          <h1>All</h1>
+          <h1 id="activeTitle">All</h1>
 
           <!-- List of tasks -->
           <ul class="list-group list-group-flush" id="tasklist">

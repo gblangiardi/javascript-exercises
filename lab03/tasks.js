@@ -46,12 +46,22 @@ function TaskList(){
     }
 
     this.todayFilter = function(){
-        const result = this.tasks.filter((t) => (t.date.format('DD/MM/YYYY') === dayjs().format('DD/MM/YYYY')));
+        const result = this.tasks.filter((t) => {
+            if(t.date != undefined)
+                return t.date.format('DD/MM/YYYY') === dayjs().format('DD/MM/YYYY');
+            else
+                return false;
+        });
         return result;
     }
 
     this.nextDaysFilter = function(){
-        const result = this.tasks.filter((t) => (t.diff(dayjs(), "day") >= 7));
+        const result = this.tasks.filter((t) => {
+            if(t.date != undefined)
+                return (t.date.diff(dayjs(), "day") <= 7 && t.date.diff(dayjs(), "day") >= 0);
+            else
+                return false;
+        });
         return result;
     }
 
@@ -97,6 +107,74 @@ function createListNode(tsk, i){
 
 }
 
+function replaceActive(id, tsklist){
+    let active = document.getElementsByClassName('active');
+
+    for(elem of active){
+        elem.classList.remove('active');
+    }
+
+    active = document.getElementById(id);
+    active.classList.add("active");
+
+    let mainList = document.getElementById("tasklist");
+    mainList.innerHTML="";
+
+    let newList;
+    let node;
+    let i=0;
+    let title = document.getElementById("activeTitle");
+    title.innerText = id;
+
+    switch(id){
+        case "All":
+            for(elem of tsklist.tasks){
+                i++;
+                node = createListNode(elem, i);
+                mainList.appendChild(node);
+            }
+            break;
+        
+        case "Important":
+            newList = tsklist.urgentFilter();
+            for(elem of newList){
+                i++;
+                node = createListNode(elem, i);
+                mainList.appendChild(node);
+            }
+            break;
+        case "Today":
+            newList = tsklist.todayFilter();
+            for(elem of newList){
+                i++;
+                node = createListNode(elem, i);
+                mainList.appendChild(node);
+            }
+            break;
+        case "Next 7 Days":
+            newList = tsklist.nextDaysFilter();
+            for(elem of newList){
+                i++;
+                node = createListNode(elem, i);
+                mainList.appendChild(node);
+            }
+            break;
+            
+        case "Private":
+            newList = tsklist.privateFilter();
+            for(elem of newList){
+                i++;
+                node = createListNode(elem, i);
+                mainList.appendChild(node);
+            }
+            break;
+        default:
+            break;
+    }
+
+}
+
+
 let list = new TaskList();
 
 let today = dayjs();
@@ -106,6 +184,8 @@ let dentist = new Task(13, "Appointment with the dentist", true, true, today);
 let lab = new Task(32, "WA1 laboratory to do", true, false, today);
 let calcetto = new Task(5, "Football match with friends", false, false, anotherday);
 let graduate = new Task(34, "Get this degree", false, true, undefined);
+
+const ids = ['All', 'Important', 'Private', 'Today', 'Next 7 Days'];
 
 list.add(graduate);
 list.add(dentist);
@@ -119,3 +199,14 @@ for(tsk of list.tasks){
     let tmp = createListNode(tsk, i);
     node.appendChild(tmp);
 }
+
+let e = document.getElementById(ids[0]);
+e.addEventListener('click', (event) => (replaceActive(ids[0], list)));
+e = document.getElementById(ids[1]);
+e.addEventListener('click', (event) => (replaceActive(ids[1], list)));
+e = document.getElementById(ids[2]);
+e.addEventListener('click', (event) => (replaceActive(ids[2], list)));
+e = document.getElementById(ids[3]);
+e.addEventListener('click', (event) => (replaceActive(ids[3], list)));
+e = document.getElementById(ids[4]);
+e.addEventListener('click', (event) => (replaceActive(ids[4], list)));
