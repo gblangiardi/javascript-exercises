@@ -1,38 +1,71 @@
-import {Container, Row, Dropdown, Col, Form, Button} from 'react-bootstrap';
+import {Container, Row, Dropdown, Col, Form, Button, Modal} from 'react-bootstrap';
 import { PencilSquare, Trash, PersonSquare } from 'react-bootstrap-icons';
 import {useState} from 'react'
-import list from "./TaskList"
+import {list, filters} from "./TaskList"
+import Task from "./TaskList"
+import dayjs from 'dayjs';
+
 
 
 
 function MainContent(props) {
 
     const [active, setActive] = useState("All");
-
     const updateActive = (filter) => setActive(filter);
 
 
-    let newList = [];
-
-    switch(active){
-        case "All":
-            newList=list.tasks;
-            break;
-        case "Important":
-            newList=list.urgentFilter();
-            break;
-        case "Today":
-            newList=list.todayFilter();
-            break;
-        case "Next 7 Days":
-            newList=list.nextDaysFilter();
-            break;
-        case "Private":
-            newList=list.personalFilter();
-            break;
-        default:
-            break;
+    const [newList, setNewList] = useState(list.tasks);
+    const updateList = (newTask) => {
+        setNewList(oldTasks => [...oldTasks, newTask]);
     }
+
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => {
+        setShow(false);
+        setDescription("");
+        setDate("");
+        setError("");
+        setIsUrgent(false);
+        setIsPrivate(false);
+    };
+    const handleShow = () => setShow(true);
+
+    const [description, setDescription] = useState("");
+    const [isUrgent, setIsUrgent] =useState(false);
+    const [isPrivate, setIsPrivate] = useState(false);
+    const [date, setDate] = useState("");
+    const [error, setError] = useState("");
+
+    let activeFilter = undefined;
+    activeFilter = filters.filter((e)=>(e.name === active)).pop().filter;
+
+    const handleSubmit = (event) => {
+        let valid = true;
+        event.preventDefault();
+
+        if(date === "" || dayjs(date).diff(dayjs(), 'day') < 0){
+            valid = false;
+            setError("Invalid date!");
+        }
+
+        if(description.length === 0){
+            valid = false;
+            setError("Insert a correct description!");
+        }
+
+        if(valid){
+            setError("");
+            let tmp = new Task(newList.length, description, isUrgent, isPrivate, dayjs(date));
+            updateList(tmp);
+            setShow(false);
+            setDescription("");
+            setDate("");
+            setIsUrgent(false);
+            setIsPrivate(false);
+        }
+    };
+
 
 
     return (
@@ -42,11 +75,63 @@ function MainContent(props) {
                 <Col xs = {12} md={7} className="tasks">
                 <h1 className = "taskhead"><strong>Filter: </strong> {active}</h1>
                 <Dropdown.Divider/>
-                {(newList !== undefined) ? newList.map((task => <TaskRow task={task} key={task.id}/>)) :undefined}
+                {(newList !== undefined) ? newList.filter(activeFilter).map((task => <TaskRow task={task} key={task.id}/>)) :undefined}
                 
                 </Col>
 
-                <Button type="button" className="fixed-right-bottom" size="lg" variant="success">&#43;</Button>
+                <Button type="button" className="fixed-right-bottom" size="lg" variant="success" onClick={handleShow}>&#43;</Button>
+
+                <Modal show={show} onHide={handleClose} centered>
+                    <Modal.Header closeButton>
+                    <Modal.Title>Insert a new Task</Modal.Title>
+                    </Modal.Header>
+                    <Form>
+                        <Modal.Body>
+                            <Form.Group controlId="formDescription">
+                                 <Form.Label>Insert Task description</Form.Label>
+                                 <Form.Control
+                                  value={description} 
+                                  as="textarea" 
+                                  rows={1} 
+                                  placeholder="Type here..."
+                                  onChange={(ev)=>{setDescription(ev.target.value)}}
+                                  />
+                            </Form.Group>
+                                <Form.Group>
+                                    <Form.Check 
+                                    value={isPrivate} 
+                                    type="checkbox" 
+                                    id={"private-checbox"}
+                                    label="Private"
+                                    onChange={(ev)=>{setIsPrivate(ev.target.value)}}
+                                    />
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Check 
+                                    value={isUrgent} 
+                                    type={"checkbox"} 
+                                    id={"urgent-checbox"}
+                                    label="Urgent"
+                                    onChange={(ev)=>{setIsUrgent(ev.target.value)}}
+                                    />
+                                </Form.Group>
+                            <Form.Group>
+                                <Form.Label>Select the date</Form.Label>
+                                <Form.Control 
+                                type="date" 
+                                value={date}
+                                onChange={(ev)=>{setDate(ev.target.value)}}
+                                />
+                            </Form.Group>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <span className='urgent'>{error}</span>
+                            <Button type="submit" variant="success" onClick={handleSubmit}>
+                                Submit
+                            </Button>
+                        </Modal.Footer>
+                    </Form>
+                </Modal>
             </Row>
         
         

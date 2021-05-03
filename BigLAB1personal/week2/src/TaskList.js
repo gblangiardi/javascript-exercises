@@ -67,6 +67,7 @@ function Task(id, desc, urgent=false, personal=true, date=undefined){
     this.date=date;
     
 }
+export default Task;
 
 let list = new TaskList();
 
@@ -77,9 +78,29 @@ let list = new TaskList();
     let lab = new Task(32, "WA1 laboratory to do", true, false, today);
     let calcetto = new Task(5, "Football match with friends", false, false, anotherday);
     let graduate = new Task(34, "Get this degree", false, true, undefined);
+    let week3 = new Task(71, "Complete week 3 assignement", false, true, dayjs().add(7, 'day'));
 
     list.add(graduate);
     list.add(dentist);
     list.add(lab);
     list.add(calcetto);
-export default list;
+    list.add(week3);
+
+    let filters= [];
+    filters.push({name:"All",  filter: (t)=>(t)});
+    filters.push({name:"Important", filter: (t) => (t.urgent)});
+    filters.push({name:"Today", filter: (t) => {
+        if(t.date !== undefined)
+            return t.date.format('DD/MM/YYYY') === dayjs().format('DD/MM/YYYY');
+        else
+            return false;
+    }});
+    filters.push({name:"Next 7 Days", filter: (t) => {
+        if(t.date !== undefined)
+            return (t.date.diff(dayjs(), "day") <= 7 && t.date.diff(dayjs(), "day") >= 0);
+        else
+            return false;
+    }});
+    filters.push({name:"Private", filter: (t) => (t.personal)});
+
+export {list, filters};
