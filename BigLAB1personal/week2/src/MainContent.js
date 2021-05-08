@@ -4,6 +4,7 @@ import {useState} from 'react'
 import {list, filters} from "./TaskList"
 import Task from "./TaskList"
 import dayjs from 'dayjs';
+import {Link} from 'react-router-dom'
 
 
 
@@ -15,57 +16,33 @@ function MainContent(props) {
 
 
     const [newList, setNewList] = useState(list.tasks);
-    const updateList = (newTask) => {
+    const addTask = (newTask) => {
         setNewList(oldTasks => [...oldTasks, newTask]);
+    }
+
+    const deleteTask = (task) => {
+        setNewList(oldTasks => oldTasks.filter(
+            curr => (curr.id !== task.id)
+        ));
+    }
+
+    const updateTask = (newTask) => {
+        setNewList(oldTasks => oldTasks.map(
+            (task) => (task.id === newTask.id) ? newTask : task
+        ));
     }
 
     const [show, setShow] = useState(false);
 
-    const handleClose = () => {
-        setShow(false);
-        setDescription("");
-        setDate("");
-        setError("");
-        setIsUrgent(false);
-        setIsPrivate(false);
-    };
+
     const handleShow = () => setShow(true);
 
-    const [description, setDescription] = useState("");
-    const [isUrgent, setIsUrgent] =useState(false);
-    const [isPrivate, setIsPrivate] = useState(false);
-    const [date, setDate] = useState("");
     const [error, setError] = useState("");
 
     let activeFilter = undefined;
     activeFilter = filters.filter((e)=>(e.name === active)).pop().filter;
 
-    const handleSubmit = (event) => {
-        let valid = true;
-        event.preventDefault();
-
-        if(date === "" || dayjs(date).diff(dayjs(), 'day') < 0){
-            valid = false;
-            setError("Invalid date!");
-        }
-
-        if(description.length === 0){
-            valid = false;
-            setError("Insert a correct description!");
-        }
-
-        if(valid){
-            setError("");
-            let tmp = new Task(newList.length, description, isUrgent, isPrivate, dayjs(date));
-            updateList(tmp);
-            setShow(false);
-            setDescription("");
-            setDate("");
-            setIsUrgent(false);
-            setIsPrivate(false);
-        }
-    };
-
+    
 
 
     return (
@@ -75,13 +52,76 @@ function MainContent(props) {
                 <Col xs = {12} md={7} className="tasks">
                 <h1 className = "taskhead"><strong>Filter: </strong> {active}</h1>
                 <Dropdown.Divider/>
-                {(newList !== undefined) ? newList.filter(activeFilter).map((task => <TaskRow task={task} key={task.id}/>)) :undefined}
+                {(newList !== undefined) ? newList.filter(activeFilter).map((task => <TaskRow task={task} key={task.id} deleteTask={deleteTask} updateTask={updateTask} newList={newList}/>)) :undefined}
                 
                 </Col>
 
                 <Button type="button" className="fixed-right-bottom" size="lg" variant="success" onClick={handleShow}>&#43;</Button>
 
-                <Modal show={show} onHide={handleClose} centered>
+                <MyModal show={show} setShow={setShow} error={error} setError={setError} newList={newList} updateList={addTask}/>
+
+            </Row>
+        
+        
+        </Container>
+    );
+}
+
+export default MainContent;
+
+function MyModal(props){
+
+    const [description, setDescription] = useState((props.task) ? props.task.desc : "");
+    const [isUrgent, setIsUrgent] =useState((props.task) ? props.task.urgent : false);
+    const [isPrivate, setIsPrivate] = useState((props.task) ? props.task.personal : false);
+    const [date, setDate] = useState((props.task && props.task.date) ? props.task.date.format('YYYY-MM-DDTHH:mm') : "");
+
+    const handleClose = () => {
+        props.setShow(false);
+        setDescription("");
+        setDate("");
+        props.setError("");
+        setIsUrgent(false);
+        setIsPrivate(false);
+    };
+
+    const handleSubmit = (event) => {
+        let valid = true;
+        event.preventDefault();
+
+        if(date === "" || dayjs(date).isBefore(dayjs(), 'day')){
+            valid = false;
+            props.setError("Invalid date!");
+        }
+
+        if(description.length === 0 || (!props.task && props.newList.map((t)=>t.desc).includes(description))){
+            valid = false;
+            props.setError("Insert a correct description!");
+        }
+
+        if(valid){
+            let tmp;
+            props.setError("");
+            if(props.task){
+                tmp = new Task(props.task.id, description, isUrgent, isPrivate, dayjs(date));
+                props.updateList(tmp);
+            }
+            else{
+                tmp = new Task(props.newList.length+1, description, isUrgent, isPrivate, dayjs(date));
+                props.updateList(tmp);
+            }
+            props.setShow(false);
+            setDescription("");
+            setDate("");
+            setIsUrgent(false);
+            setIsPrivate(false);
+        }
+    };
+
+
+
+    return(
+        <Modal show={props.show} onHide={handleClose} centered>
                     <Modal.Header closeButton>
                     <Modal.Title>Insert a new Task</Modal.Title>
                     </Modal.Header>
@@ -103,43 +143,37 @@ function MainContent(props) {
                                     type="checkbox" 
                                     id={"private-checbox"}
                                     label="Private"
-                                    onChange={(ev)=>{setIsPrivate(ev.target.value)}}
+                                    onChange={(ev)=>{setIsPrivate(p=>!p)}}
                                     />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Check 
                                     value={isUrgent} 
-                                    type={"checkbox"} 
+                                    type="checkbox" 
                                     id={"urgent-checbox"}
                                     label="Urgent"
-                                    onChange={(ev)=>{setIsUrgent(ev.target.value)}}
+                                    onChange={(ev)=>{setIsUrgent(p=>!p)}}
                                     />
                                 </Form.Group>
                             <Form.Group>
                                 <Form.Label>Select the date</Form.Label>
                                 <Form.Control 
-                                type="date" 
+                                type="datetime-local" 
                                 value={date}
                                 onChange={(ev)=>{setDate(ev.target.value)}}
                                 />
                             </Form.Group>
                         </Modal.Body>
                         <Modal.Footer>
-                            <span className='urgent'>{error}</span>
+                            <span className='urgent'>{props.error}</span>
                             <Button type="submit" variant="success" onClick={handleSubmit}>
                                 Submit
                             </Button>
                         </Modal.Footer>
                     </Form>
                 </Modal>
-            </Row>
-        
-        
-        </Container>
-    );
+    )
 }
-
-export default MainContent;
 
 function FilterList(props){
 
@@ -163,15 +197,27 @@ function FilterList(props){
 
 function MyButton(props){
     if(props.active)
-        return (<Button variant="success" href="#" className="filter-button" size="lg" onClick={()=> props.updateActive(props.name)} >{props.name}</Button>)
+        return (
+        <Link to={"/"+props.name.toLowerCase().replace(/ /g, '')}>
+            <Button variant="success" className="filter-button" size="lg" onClick={()=> props.updateActive(props.name)} >{props.name}</Button>
+        </Link>)
     else
-        return (<Button variant="light" href="#" className="filter-button" size="lg" onClick={()=> props.updateActive(props.name)}>{props.name}</Button>)
+        return (
+        <Link to={"/"+props.name.toLowerCase().replace(/ /g, '')}>
+            <Button variant="light" className="filter-button" size="lg" onClick={()=> props.updateActive(props.name)}>{props.name}</Button>
+        </Link>
+            )
 }
 
 function TaskRow(props){
     const trash_icon =  <Trash/>;
     const modify_icon = <PencilSquare/>;
     const private_icon =  <PersonSquare/>;
+
+    const [show, setShow] = useState(false);
+    const handleShow = () => setShow(true);
+
+    const [error, setError] = useState("");
 
     return(
     <>
@@ -183,17 +229,21 @@ function TaskRow(props){
                 {(props.task.personal) ? private_icon : undefined}
             </Col>
             <Col xs = {{ span: 4, offset: 0 }} className="date">
-                {(props.task.date !== undefined) ? props.task.date.format("HH:MM DD MMM YYYY") : undefined}
+                {(props.task.date !== undefined) ? props.task.date.format("HH:mm DD MMM YYYY") : undefined}
             </Col>
             <Col xs = {1}>
-                {modify_icon}
+                <Button variant='light' onClick={handleShow}>{modify_icon}</Button>
             </Col>
             <Col xs ={1}>
-                {trash_icon}
+                <Button variant='light' onClick={() => props.deleteTask(props.task)}>{trash_icon}</Button>
             </Col>
 
         </Row>
         <Dropdown.Divider/>
+        <MyModal show={show} setShow={setShow} error={error} 
+                setError={setError} newList={props.newList} 
+                updateList={props.updateTask} task={props.task}/>
+
     </>
     );
 }

@@ -9,7 +9,7 @@ function MyNavbar(){
     return (
         <Navbar bg="success" expand="xs" variant = "dark">
             <Col xs={2}>
-                <Navbar.Brand href = "#home">{todo_icon} 
+                <Navbar.Brand href = "/">{todo_icon} 
                 ToDo Manager</Navbar.Brand>
             </Col>
             <Col xs ={{ span: 4, offset: 2 }}>
