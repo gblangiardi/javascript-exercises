@@ -40,7 +40,7 @@ function MainContent(props) {
     const [error, setError] = useState("");
 
     let activeFilter = undefined;
-    activeFilter = filters.filter((e)=>(e.name === active)).pop().filter;
+    activeFilter = filters.filter((e)=>(e.name === props.filter)).pop().filter;
 
     
 
@@ -48,9 +48,9 @@ function MainContent(props) {
     return (
         <Container fluid>
             <Row>
-                <FilterList active={active} updateActive={updateActive}/>
+                <FilterList active={props.filter} updateActive={updateActive}/>
                 <Col xs = {12} md={7} className="tasks">
-                <h1 className = "taskhead"><strong>Filter: </strong> {active}</h1>
+                <h1 className = "taskhead"><strong>Filter: </strong> {props.filter}</h1>
                 <Dropdown.Divider/>
                 {(newList !== undefined) ? newList.filter(activeFilter).map((task => <TaskRow task={task} key={task.id} deleteTask={deleteTask} updateTask={updateTask} newList={newList}/>)) :undefined}
                 
@@ -109,12 +109,13 @@ function MyModal(props){
             else{
                 tmp = new Task(props.newList.length+1, description, isUrgent, isPrivate, dayjs(date));
                 props.updateList(tmp);
+                setDescription("");
+                setDate("");
+                setIsUrgent(false);
+                setIsPrivate(false);
             }
             props.setShow(false);
-            setDescription("");
-            setDate("");
-            setIsUrgent(false);
-            setIsPrivate(false);
+            
         }
     };
 
@@ -141,6 +142,7 @@ function MyModal(props){
                                     <Form.Check 
                                     value={isPrivate} 
                                     type="checkbox" 
+                                    checked={isPrivate}
                                     id={"private-checbox"}
                                     label="Private"
                                     onChange={(ev)=>{setIsPrivate(p=>!p)}}
@@ -150,6 +152,7 @@ function MyModal(props){
                                     <Form.Check 
                                     value={isUrgent} 
                                     type="checkbox" 
+                                    checked={isUrgent}
                                     id={"urgent-checbox"}
                                     label="Urgent"
                                     onChange={(ev)=>{setIsUrgent(p=>!p)}}
