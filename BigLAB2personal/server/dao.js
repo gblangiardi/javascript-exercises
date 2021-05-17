@@ -82,7 +82,7 @@ exports.createTask = (task) => {
     return new Promise((resolve, reject) => {
       const sql = 
       `INSERT INTO tasks(id, description, important, private, deadline, completed, user) 
-      VALUES(?, ?, ?, ?, DATE(?), ?, ?)`;
+      VALUES(?, ?, ?, ?, ?, ?, ?)`;
       db.run(sql, [lastID+1, task.description, task.important, task.private, task.deadline, task.completed, task.user], 
           function (err) {
         if (err) {
@@ -98,7 +98,7 @@ exports.createTask = (task) => {
 exports.updateTask = (t) => {
     return new Promise((resolve, reject) => {
         const sql =`UPDATE tasks SET 
-        description = ?, important = ?, private = ?, deadline = DATE(?), completed=?, user= ?
+        description = ?, important = ?, private = ?, deadline = ?, completed=?, user= ?
          WHERE id = ?`;
         db.run(sql, [t.description, t.important, t.private, t.deadline, t.completed, t.user, t.id],
             (err) => {
@@ -191,7 +191,7 @@ exports.setCompleted = (id, completed) => {
                 reject(err);
                 return;
             }
-            resolve();
+            resolve(this.lastID);
         });
     });
 }

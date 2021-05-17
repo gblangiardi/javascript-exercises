@@ -2,7 +2,7 @@ GET http://localhost:3001/apis/tasks
 
 ###
 
-GET http://localhost:3001/apis/filter/important
+GET http://localhost:3001/apis/filter/next7days
 
 ###
 
@@ -24,13 +24,13 @@ Content-Type: application/json
 PUT http://localhost:3001/apis/tasks
 Content-Type: application/json
 
-{"id" : 4, "description" : "toma", "important" : 0, "private" : 1, "deadline" :"", "completed" : 0, "user" : 1}
+{"id" : 4, "description" : "peppe", "important" : 0, "private" : 1, "deadline" :"", "completed" : 0, "user" : 1}
 
 ###
 PUT http://localhost:3001/apis/completed
 Content-Type: application/json
 
-{"id" : 2, "completed" : 1}
+{"id" : 4, "completed" : 1}
 
 ###
-DELETE http://localhost:3001/apis/tasks/14
+DELETE http://localhost:3001/apis/tasks/4

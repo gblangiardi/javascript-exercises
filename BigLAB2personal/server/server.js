@@ -92,9 +92,14 @@ app.put("/apis/tasks", (req, res) => {
         .catch((err) => {res.status(500).json(err)});
 });
 
-app.put("/apis/completed", (req, res) => {
-    dao.setCompleted(req.body.id, req.body.completed).then()
-        .catch((err) => {res.status(500).json(err)});
+app.put("/apis/completed", async (req, res) => {
+    try{
+        let id = await dao.setCompleted(req.body.id, req.body.completed);
+            res.end();
+    }
+    catch(error){
+        res.status(500).json(error);
+    }
 });
 
 app.delete('/apis/tasks/:id', async (req, res) => {
