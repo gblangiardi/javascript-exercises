@@ -1,0 +1,36 @@
+GET http://localhost:3001/apis/tasks
+
+###
+
+GET http://localhost:3001/apis/filter/important
+
+###
+
+GET http://localhost:3001/apis/filter/today
+
+###
+
+GET http://localhost:3001/apis/tasks/15
+
+###
+
+POST http://localhost:3001/apis/tasks
+Content-Type: application/json
+
+{ "description" : "testtoday", "important" : 1, "private" : 1, "deadline" : "2021-05-17 12:00", "completed" : 0, "user" : 1 }
+
+###
+
+PUT http://localhost:3001/apis/tasks
+Content-Type: application/json
+
+{"id" : 4, "description" : "toma", "important" : 0, "private" : 1, "deadline" :"", "completed" : 0, "user" : 1}
+
+###
+PUT http://localhost:3001/apis/completed
+Content-Type: application/json
+
+{"id" : 2, "completed" : 1}
+
+###
+DELETE http://localhost:3001/apis/tasks/14

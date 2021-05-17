@@ -29,3 +29,60 @@ Provide a short description for API with the required parameters, follow the pro
 * [Sample request, with body (if any)]
 * [Sample response, with body (if any)]
 * [Error responses, if any]
+
+### List all tasks
+
+* GET "/apis/tasks"
+* Retrieves the list of all the available tasks
+* GET /api/all Empty body
+* HTTP 200 [{id, description, important, private deadline, completed, user}, {id, description, important, private deadline, completed, user} ...]
+* HTTP 500 
+
+### List tasks with filter
+
+* GET "/apis/:filterId"
+* Retrieves a list of tasks satisfying the filter
+* GET /api/important ; Empty body
+* HTTP 200 [{id, description, important, private deadline, completed, user}, {id, description, important, private deadline, completed, user} ...]
+* HTTP 500
+
+### Get a task by its Id
+
+* GET "/apis/tasks/:taskId"
+* Retrieves the task with the same Id of the parameter taskId
+* GET /apis/tasks/20 ; Empty body
+* HTTP 200 {id, description, important, private deadline, completed, user}
+* HTTP 500 resource not found
+
+### Add a new task
+
+* POST "/apis/tasks"
+* Creates and inserts a new task in the db
+* POST /apis/tasks {description, important, private deadline, completed, user}
+* HTTP 200 {id}
+* HTTP 500 could not insert new item
+
+### Update a task
+
+* PUT "/apis/tasks"
+* Updates an existing task in the db of given Id
+* PUT /apis/tasks {id, description, important, private deadline, completed, user}
+* HTTP 200 Empty body
+* HTTP 500 item not found or error in updating
+
+### Mark a task as completed
+
+* PUT "/apis/completed"
+* Mark an already exisiting task in the db as completed according to the value of the parameter in the req body
+* PUT "/apis/complete" {id, completed}
+* HTTP 200 Empty body
+* HTTP 500 item not found or error in updating
+
+### Delete a task
+
+* DELETE "apis/tasks/:taskId"
+* Deletes a task of given Id
+* DELETE /apis/tasks/20 Empty Body
+* HTTP 200 Empty body
+* HTTP 200 item not found
+
