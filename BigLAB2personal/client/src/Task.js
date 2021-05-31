@@ -6,12 +6,13 @@ import dayjs from 'dayjs';
 
 
 
-function Task(id, description, isUrgent = false, isPrivate = true, deadline = '', hour, minute) {
+function Task(id, description, isUrgent = false, isPrivate = true, deadline = '', hour, minute, completed = false) {
     this.id = id;
     this.description = description;
     this.important = isUrgent;
     this.private = isPrivate;
     this.deadline =dayjs(deadline);
+    this.completed = completed
     
   
     this.toString = () => {

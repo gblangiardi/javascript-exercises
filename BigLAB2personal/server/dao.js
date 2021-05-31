@@ -98,9 +98,9 @@ exports.createTask = (task) => {
 exports.updateTask = (t) => {
     return new Promise((resolve, reject) => {
         const sql =`UPDATE tasks SET 
-        description = ?, important = ?, private = ?, deadline = ?, completed=?, user= ?
+        description = ?, important = ?, private = ?, deadline = ?, user= ?
          WHERE id = ?`;
-        db.run(sql, [t.description, t.important, t.private, t.deadline, t.completed, t.user, t.id],
+        db.run(sql, [t.description, t.important, t.private, t.deadline, t.user, t.id],
             (err) => {
                 if(err){
                     reject(err);

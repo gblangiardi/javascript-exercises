@@ -31,7 +31,7 @@ function TaskRow(props){
         <>
         <Row>
         <Col xs = {{ span: 3, offset: 1 }}>
-            <Form.Check type="checkbox" className = {important} label={props.task.desc}/>
+            <Form.Check type="checkbox" onClick = {() => props.setCompleted(props.task.id, !props.task.completed)} checked = {props.task.completed} className = {important} label={props.task.desc}/>
         </Col>
         <Col xs = {{span: 1, offset: 1}}>
             {private_icon}

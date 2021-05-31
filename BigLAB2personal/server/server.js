@@ -86,8 +86,7 @@ app.post('/apis/tasks', async (req, res) => {
 
 app.put("/apis/tasks", (req, res) => {
     dao.updateTask({id: req.body.id, description : req.body.description, important : req.body.important,
-        private : req.body.private, deadline : req.body.deadline,
-        completed : req.body.completed, user : req.body.user})
+        private : req.body.private, deadline : req.body.deadline, user : req.body.user})
         .then((id) => {res.json(id)})
         .catch((err) => {res.status(500).json(err)});
 });

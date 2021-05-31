@@ -66,7 +66,7 @@ Provide a short description for API with the required parameters, follow the pro
 
 * PUT "/apis/tasks"
 * Updates an existing task in the db of given Id
-* PUT /apis/tasks {id, description, important, private deadline, completed, user}
+* PUT /apis/tasks {id, description, important, private, deadline, user}
 * HTTP 200 Empty body
 * HTTP 500 item not found or error in updating
 

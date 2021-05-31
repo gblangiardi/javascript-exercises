@@ -7,7 +7,7 @@ import {Task, TaskList} from './Task.js';
 import dayjs from 'dayjs';
 import {Link} from 'react-router-dom';
 import {useEffect} from 'react'
-
+import API from './API'
 
 function MyBody(props){
 
@@ -15,72 +15,42 @@ function MyBody(props){
     const [reload, setReload] = useState(true);
    
     useEffect(()=>{
-      async function loadTasks(){
-        try{
-          const response = await fetch('/apis/filter/' + props.apiFilter, {
-            method : 'GET',
-            headers : {
-              "Content-Type" : "application/json"
-            }
-          });
-          const dbList = await response.json();
-          let newTasks = new TaskList([]);
-          dbList.forEach(e => {
-            newTasks.add(e);
-          });
-
-          setTasks(newTasks);
-
-        }
-        catch(err){
-          console.log(err);
-        }
-      }
+      console.log(reload);
       if(reload){
-        loadTasks();
+        API.loadTasks(props.apiFilter).then((newT) => {setTasks(newT)});
         setReload(false);
       }
 
     }, [reload, props.apiFilter]);
+
+    useEffect(()=>{
+      API.loadTasks(props.apiFilter).then((newT) => {setTasks(newT)});
+    }, [props.selected, props.apiFilter]);
     
     const chooseFilter = (name) => {
       //setSelected(name);
     }
 
     const addTask = (task) => {
-        async function myAdd(){
-
-          const newT = {"description" : task.description, "important" : task.important, "private" : task.private, "deadline" : task.deadline, "user" : 1}
-
-          await fetch('/apis/tasks', {
-            method : 'POST',
-            headers : {
-              "Content-Type" : "application/json"
-            },
-            body : JSON.stringify(newT)
-          });
-        }
-
-        myAdd()
+        API.myAdd(task);
         askReload();
     }
     
     const modifyTask = (task) =>{
-      props.tasks.modify(task);
-
-      setTasks(() => {
-        let newTasks = new TaskList(props.tasks.getList());
-        return newTasks;
-      });
+      API.modifyTask(task);
+      askReload();
     }
     const removeTask = (task) => {
-      props.tasks.remove(task);
+      API.deleteTask(task);
 
-      setTasks(() => {
-        let newTasks = new TaskList(props.tasks.getList());
-        return newTasks;
-      });
+     askReload();
     } 
+
+    const setCompleted = (id, completed) =>{
+      API.setCompleted(id, completed);
+
+      askReload();
+    }
      
     const askReload = () => {
       setReload(true);
@@ -93,7 +63,7 @@ function MyBody(props){
         <Row>
             <MySide selected = {props.selected} filters = {props.filters} choose = {chooseFilter} reload={askReload}/>
 
-            <MyMain selected = {props.selected} tasks = {tasks} filters = {props.filters} modify ={modifyTask} remove = {removeTask}/> 
+            <MyMain selected = {props.selected} tasks = {tasks} filters = {props.filters} modify ={modifyTask} remove = {removeTask} setCompleted = {setCompleted}/> 
         
             <MyButton addTask = {addTask} tasks = {tasks}/>
         </Row>
@@ -125,7 +95,7 @@ function FilterRow(props){
     if(props.selected === props.name){
         return(
             <>
-                <Button variant="success" className="filter-button" size="lg" onClick={() => props.choose(props.name)}>{props.name}</Button>
+                <Button variant="success" className="filter-button" size="lg" onClick={() => props.reload()}>{props.name}</Button>
                 <Dropdown.Divider className="filter-divider" />
             </>
         );
@@ -159,7 +129,7 @@ function MyMain(props){
         <Dropdown.Divider/>
         {
           props.tasks.getList().filter((t)=>selected_filter(t)).map((t) => <TaskRow task = {t} key ={t.id} 
-          modify = {props.modify} remove = {props.remove} tasks ={props.tasks}/>)
+          modify = {props.modify} remove = {props.remove} tasks ={props.tasks} setCompleted = {props.setCompleted}/>)
         }
         </Col>
         </>
@@ -197,7 +167,7 @@ function MyModal(props){
   let min_init = 0;
 
   if(props.task !== undefined){
-    desc_init = props.task.description;
+    desc_init = props.task.desc;
     important_init = props.task.important;
     priv_init = props.task.private;
     date_init = dayjs(props.task.deadline).format("YYYY-MM-DD");
@@ -237,7 +207,7 @@ function MyModal(props){
       //setError((old) => old.concat("-description has to be unique-"));
     }
 
-    if(dayjs().isAfter(date)){
+    if(dayjs().subtract(1, 'day').isAfter(date)){
       valid = false;
       if(localerr!==[]){
         localerr.push(" ");
